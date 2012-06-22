@@ -20,8 +20,8 @@ body {
 .zoom-control {
     position: absolute;
     z-index: 1;
-    left: 6px;
-    bottom: 20px;
+    left: 20px;
+    top: 20px;
 }
 
 .zoom-control > .button {

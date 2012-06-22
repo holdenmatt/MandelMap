@@ -13,8 +13,7 @@ LIBS = \
 	http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js \
 	http://modernizr.com/downloads/modernizr.js \
 	http://underscorejs.org/underscore.js \
-	http://backbonejs.org/backbone.js \
-	http://cloud.github.com/downloads/wycats/handlebars.js/handlebars-1.0.0.beta.6.js
+	http://backbonejs.org/backbone.js
 
 # Include these files built from Twitter Bootstrap.
 BOOTSTRAP_FILES = \

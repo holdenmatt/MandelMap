@@ -1,0 +1,62 @@
+body {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-text-size-adjust: none;
+}
+
+#footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    font-size: 10px;
+    text-align: right;
+    height: 19px;
+    line-height: 19px;
+    -webkit-user-select: none;
+    background-image: -webkit-gradient(linear,0 0,50 0,from(rgba(255, 255, 255, 0)),to(rgba(255, 255, 255, 0.45)));
+}
+
+
+.zoom-control {
+    position: absolute;
+    z-index: 1;
+    left: 6px;
+    bottom: 20px;
+}
+
+.zoom-control > .button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-width: 5px;
+    -webkit-user-select: none;
+}
+
+.zoom-control > .button > .icon {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.zoom-control > .top.button {
+    -webkit-border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAgCAYAAADEx4LTAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOC8xNy8xMJSeiU8AAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAuklEQVQ4je3SPQrCQBCG4TdxhRDs9CKewSuIHtNS7LaMsfAcFvF/NK6JY2FiIUKChSLkg4EpnoUPZj0e8YAO0Ae6QACkQAIsgSOgJewCQ2vtREQSVVURSay1E2AI9AqHAQZRNJ86l2t6yfScZppeMnUu1zhezIBB4QiB0WYnchCnr7Pdn87AGAhN8aKF1w6znDcxAeADxi+WOvFNualW6w9xjR7fqPGHnW81cN1TN7jBP8LP/7xaXyvxHb4oZJF4zpLWAAAAAElFTkSuQmCC) 5 5 5 5;
+}
+.zoom-control > .top.button:active {
+    -webkit-border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAgCAYAAADEx4LTAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOC8xNy8xMJSeiU8AAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABjElEQVQ4ja2SMW7UQBSGvzczcXaTjTeWSJOCC3ADKiI4AD0FCmfgClBxBYSQcgtEk4IDcAQKGkRA0QaQWL+fwrv2JLaVWGIkS9bvz5//eWOjWfb49P39+eLojYXwEOwY9FXun36vvr38+O75F0kywJ68OHswP7h3vij3q/3FHilF1uuaq9UvVpdXP/6svp98ePvscwJiMS9fL6uyWlZLQkyYGTsSu7MZMcbK67+vgKcJKEIsHi0OS2IxI8aEBUMu6npNeWj8vLg8AYoEJDM7KHZnpJ2CGBOYgYSFAAgz2wNSAgKAhYSFCCFgZkjCFLGQNjOguxOGRHu1GbZFaGEkxBbUJsrezGGXMHfITO6Oj8I3TC6NwC6Cg9M9lDf5AOy4e1YCtMl6sFy4N/vPM42Z7a7m2gUD5nrILKk31za7CRNSc3qZCZEf8vXOGM1P1KlxDXR2V/NLZZ9t814NBby+Dm769eE6G9HY6moMWsfgSWafYp5S479tcDu8O3XuwZq0wUmdbxd38FwXt8L/AMCs7OA49hcLAAAAAElFTkSuQmCC) 5 5 5 5;
+}
+
+.zoom-control > .bottom.button {
+    margin-top: -1px;
+    -webkit-border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAjCAYAAABCU/B9AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOC8xNy8xMJSeiU8AAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAA40lEQVQ4je3UMUvDcBDG4SdtKhUXUVHBxdFdEJw6OzuJn83JwcEPoLMITkUUqg4OLh2FoNEGmyYO/oNBiCCCOPSFgxt+3PseHBcJ6t+9lBq0uTEXQYx57KwsdJpY2MNJ6zviq6bwFP57OK6asvH0fw3/kxjTzD+cXB1SMc7Hr2VwqFee5xmKCi6Q3g6uz8vyw6FeN4OrM6Qo2mijdXx0MNza7sWLS8urcdzpZtkouexfnO7v9g5xj8fI59tdwzq6NccMDxgiiTHBU4iYYrYGj5DgGZMoLBiFODPBKar2w1sYWL4DtMdfDgVG1csAAAAASUVORK5CYII=) 5 5 5 5;
+}
+.zoom-control > .bottom.button:active {
+    -webkit-border-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAjCAYAAABCU/B9AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOC8xNy8xMJSeiU8AAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABeUlEQVQ4jbWRTYoTURRGz32VFB1F7IAIgogOXITbcAEuwK3oHgRx7BZEGmwzcyjdAx2IjQNtSXdbJqn3fQ5MaaXyQzLIhTe5HM797n0B8OjJa4BT1tfD45eP6QGHt4bXz+/ev7OW/PL5zMCw1zTKg2sbxH/rH9wvB9vDqdfbxC3CRNoelrw9bO8AS9oB3s28txh7M+e93TnXM1IqIBIRYAMWUl6V2YCJZJohlhcW7ywYRGuspYXF/8fIGUgEbsGe97vmbAITXoSV18UIbRdD2RAdszeZJaKltteZbZCJ6Ji9ypznd+7Cq2JkCcfqGMUu5iXYMopl2K3vTvNxl5KwvPQkYftXA2s2uRwlT9H8E9ovecpscnEMKAH12enRs76rcaEKKyODlSlU0Xc1/nry9jlQF4C/fRqdT3+P3wxvP7hXFrpZxmSQ8tWPuvr+/uO7F09PRq8+AFcBBNAHbgCHwKCJB1TAT+ACmDVXDaAAyvmFAjBQA1Mg2/Yf1IIut3AIdLIAAAAASUVORK5CYII=) 5 5 5 5;
+}
+
+.plus.icon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFVJREFUeNpi/P//PwOlgImBCoAFn6S+VwfcmRe3VTDS1CXDzBBGWBQjByKxABbYg9A7QPAfSzpBdjpW/eiJDVti+k9AflinExyAqDBhIWQJ3bwDEGAAFaQaHUIzWOsAAAAASUVORK5CYII=);
+}
+.minus.icon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADtJREFUeNpi/P//PwOlgImBCmDUEBoZwgJj6Ht1kBzXF7dVMA4u7zAipVhyki4jSpjABEbTyXAzBCDAALJhCyKhamrYAAAAAElFTkSuQmCC);
+}

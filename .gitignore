@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+
+venv/
+static/build/
+static/.webassets-cache/

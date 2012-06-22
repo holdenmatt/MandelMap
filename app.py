@@ -36,12 +36,6 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/<file_name>.txt')
-def send_text_file(file_name):
-    """Send static text files."""
-    return app.send_static_file(file_name + '.txt')
-
-
 @app.after_request
 def add_header(response):
     """

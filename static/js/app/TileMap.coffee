@@ -1,5 +1,12 @@
 ###
 TileMap.coffee
+
+TileMap:
+Manage an interactive Google-Maps-like viewport that can be dragged and zoomed,
+and is composed of separate tile elements.
+
+CanvasTileMap:
+Use <canvas> tiles that render by progressively enhancing the resolution.
 ###
 
 # Width/height of tiles, in pixels.

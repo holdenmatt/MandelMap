@@ -26,13 +26,13 @@ app_js = Bundle(
     Bundle(
         'js/app/TileMap.coffee',
         'js/app/ColorMap.coffee',
+        'js/app/Mandelbrot.coffee',
         filters='coffeescript',
 
-        # Note: these can be eliminated once webassets 0.8 is released.
+        # Note: This will work better in webassets 0.8.
         output='build/coffee.js',
         debug=False
     ),
-    'js/app/Mandelbrot.js',
     filters='uglifyjs',
     output='build/app.js'
 )

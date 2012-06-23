@@ -5,9 +5,7 @@ A ColorMap is a way of mapping each numeric value in [0, infinity) to a color.
 ###
 
 
-
-# reflect?
-# function?
+# TODO: reflect color stops?  Apply a function (sqrt, log, exp) to values?
 
 
 # Given start/end values in [0, 255] and a parameter value in [0, 1],
@@ -25,10 +23,9 @@ class Color
     interpolateWith: (other, param) ->
         new Color (interpolate(@values[i], other.values[i], param) for i in [0...4])
 
-    # Return the hex code for this color, ignoring alpha.
-    toHex: () ->
-        [r, g, b] = [@values[0], @values[1], @values[2]]
-        "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+    toRGBA: () ->
+        [r, g, b, a] = @values
+        "rgba(#{r}, #{g}, #{b}, #{a})"
 
     # Convert from a hex code to rgba.
     @fromHex: (hex) ->
@@ -64,27 +61,38 @@ class LinearGradient
         if not (first == 0 and last == 1)
             throw new Error "stops must start with 0 and end with 1"
 
+        # There can be at most 255 gradient values between each color pair,
+        # so cache colors at these tick values for efficiency.
+        @ticks = 255 * (@length - 1)
+        @cache = {}
+
 
     # Return the gradient color at a given value in [0, 1].
-    # TODO: cached values at tick values.
     colorAt: (value) ->
         if not 0 <= value <= 1
             throw new Error "value must be in [0, 1]"
 
-        # Find the largest index i and smallest index j such that
-        # stops[i] <= value <= stops[j].
-        i = 0
-        while @stops[i + 1] <= value and i + 1 < @length - 1
-            i++
-        j = @length - 1
-        while @stops[j - 1] >= value and j - 1 > 0
-            j--
+        # First check the cache.
+        key = Math.floor(value * @ticks)
+        color = @cache[key]
 
-        # Interpolate between the corresponding colors.
-        start = @colors[i]
-        end   = @colors[j]
-        param = if i == j then 0 else (value - @stops[i]) / (@stops[j] - @stops[i])
-        return start.interpolateWith end, param
+        if not color?
+            # Find the largest index i and smallest index j such that
+            # stops[i] <= value <= stops[j].
+            i = 0
+            while @stops[i + 1] <= value and i + 1 < @length - 1
+                i++
+            j = @length - 1
+            while @stops[j - 1] >= value and j - 1 > 0
+                j--
+
+            # Interpolate between the corresponding colors.
+            start = @colors[i]
+            end   = @colors[j]
+            param = if i == j then 0 else (value - @stops[i]) / (@stops[j] - @stops[i])
+            @cache[key] = color = start.interpolateWith end, param
+
+        return color
 
 
 class ColorMap

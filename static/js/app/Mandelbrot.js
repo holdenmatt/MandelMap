@@ -88,7 +88,7 @@
         if (value === 0) {
             return BLACK;
         }
-        return ColorMap.RAINBOW.colorAt(value - 1).toHex();
+        return ColorMap.RAINBOW.colorAt(value - 1).toRGBA();
     }
 
     var map = new CanvasTileMap({

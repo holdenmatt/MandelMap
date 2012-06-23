@@ -10,6 +10,8 @@
 
     var MAX_ITERATIONS = 100;
 
+    var BLACK = "#000000";
+
     // Is a complex point c inside the main cardioid?
     function isInMainCardioid (c_x, c_y) {
         var q = (c_x - 0.25) * (c_x - 0.25) + c_y * c_y;
@@ -60,7 +62,7 @@
             // http://linas.org/art-gallery/escape/escape.html
 
             // Iterating a couple more times reduces the normalization error.
-            var moreTerms = 2;
+            var moreTerms = 4;
             for (var j = 0; j < moreTerms; j++) {
                 x2 = z_x * z_x;
                 y2 = z_y * z_y;
@@ -83,7 +85,10 @@
     // Return a color to indicate the escape time at a point.
     function getColor (x, y) {
         var value = getEscapeValue(x, y, MAX_ITERATIONS);
-        return Colors.interpolate(value);
+        if (value === 0) {
+            return BLACK;
+        }
+        return ColorMap.RAINBOW.colorAt(value - 1).toHex();
     }
 
     var map = new CanvasTileMap({

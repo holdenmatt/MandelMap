@@ -16,7 +16,7 @@ TILE_SIZE = 128
 MIN_RESOLUTION = 8
 
 # Yield to user interaction if we've been drawing more than this # of ms.
-ANIMATION_SPEED = 20
+ANIMATION_SPEED = 30
 
 
 # Compare an object's keys against required/optional values.

@@ -5,7 +5,18 @@ A ColorMap is a way of mapping each numeric value in [0, infinity) to a color.
 ###
 
 
-# TODO: reflect color stops?  Apply a function (sqrt, log, exp) to values?
+# A gradient between two colors can have at most 256 values, so we'll cache ColorMap
+# values at this # of ticks per color pair.  64 is high enough to hide discrete colors.
+COLOR_PAIR_TICKS = 64
+
+
+# Apply a transform [0, infinity) -> [0, infinity) before computing colors.
+transform = (value) ->
+    # Escape values start at 1, 2..., so shift them down to 0.
+    value = Math.max(value - 1, 0)
+    # Without a transform, we get lots of noise near the M-set, and noise increases
+    # as we zoom in.  Applying a sqrt reduces noise, and keeps in constant on zoom.
+    return Math.sqrt(value)
 
 
 # Given start/end values in [0, 255] and a parameter value in [0, 1],
@@ -45,7 +56,6 @@ class LinearGradient
 
         # Use equal spacing if no stop values are given.
         @stops ?= (i / (@length - 1) for i in [0...@length])
-
         if @stops.length != @colors.length
             throw new Error "stops and colors must have matching length"
 
@@ -57,51 +67,56 @@ class LinearGradient
         if not (first == 0 and last == 1)
             throw new Error "stops must start with 0 and end with 1"
 
-        # There can be at most 255 gradient values between each color pair,
-        # so cache colors at these tick values for efficiency.
-        @ticks = 255 * (@length - 1)
-        @cache = {}
-
 
     # Return the gradient color at a given value in [0, 1].
     colorAt: (value) ->
         if not 0 <= value <= 1
             throw new Error "value must be in [0, 1]"
 
-        # First check the cache.
-        key = Math.floor(value * @ticks)
-        color = @cache[key]
+        # Find the largest index i and smallest index j such that
+        # stops[i] <= value <= stops[j].
+        i = 0
+        while @stops[i + 1] <= value and i + 1 < @length - 1
+            i++
+        j = @length - 1
+        while @stops[j - 1] >= value and j - 1 > 0
+            j--
 
-        if not color?
-            # Find the largest index i and smallest index j such that
-            # stops[i] <= value <= stops[j].
-            i = 0
-            while @stops[i + 1] <= value and i + 1 < @length - 1
-                i++
-            j = @length - 1
-            while @stops[j - 1] >= value and j - 1 > 0
-                j--
-
-            # Interpolate between the corresponding colors.
-            start = @colors[i]
-            end   = @colors[j]
-            param = if i == j then 0 else (value - @stops[i]) / (@stops[j] - @stops[i])
-            @cache[key] = color = start.interpolateWith end, param
-
-        return color
+        # Interpolate between the corresponding colors.
+        start = @colors[i]
+        end   = @colors[j]
+        param = if i == j then 0 else (value - @stops[i]) / (@stops[j] - @stops[i])
+        return start.interpolateWith end, param
 
 
 class ColorMap
-    constructor: (colors, stops, period) ->
-        @gradient = new LinearGradient colors, stops
-        @period = period or colors.length - 1
-        if not @period > 0
-            throw new Error "period must be > 0"
+
+    constructor: (colors, period) ->
+        # Reflect colors to avoid a hard transition between last/first.
+        colors = colors.slice()
+        reversed = colors.slice().reverse()
+        Array.prototype.push.apply(colors, reversed.slice(1))
+
+        @gradient = new LinearGradient colors
+        @period = colors.length - 1
+
+        # There can be at most 255 gradient values between each color pair,
+        # so cache colors at these tick values for efficiency.
+        @ticks = COLOR_PAIR_TICKS * (@gradient.length - 1)
+        @cache = {}
 
     colorAt: (value) ->
         # Convert this value to a param in [0, 1] relative to its period.
+        value = transform value
         param = (value % @period) / @period
-        @gradient.colorAt param
+
+        # Cache the result at integer tick values.
+        key = Math.floor(param * @ticks)
+        color = @cache[key]
+        if not color?
+            color = @cache[key] = @gradient.colorAt param
+
+        return color
 
 
 ColorMap.RAINBOW = new ColorMap [

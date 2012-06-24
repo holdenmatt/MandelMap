@@ -87,7 +87,6 @@ getEscapeValue = (c_x, c_y) ->
     # Give up, assume no escape.
     if i == maxIterations then return NO_ESCAPE
 
-
     if USE_SMOOTH_ESCAPE_TIMES
         # Compute a fractional escape time using the modulus in addition to i.
 
@@ -102,13 +101,9 @@ getEscapeValue = (c_x, c_y) ->
         norm = z_x * z_x + z_y * z_y
         modulus = Math.sqrt norm
         escapeTime = i + extraIterations - Math.log(Math.log(modulus)) / Math.log(2)
-
-        # Ensure the value is >= 1.
-        escapeTime = Math.max(1, escapeTime)
     else
         # Using the iteration count as escape time is simple but produces bands of color.
         escapeTime = i
-
 
     incrementEscapeTime escapeTime
     return escapeTime
@@ -145,7 +140,6 @@ getColor = (x, y) ->
     if value == 0
         color = ColorMap.BLACK
     else
-        value = Math.sqrt(value - 1)
         color = ColorMap.RAINBOW.colorAt(value)
     return color.values
 
@@ -163,7 +157,7 @@ map = new CanvasTileMap
     beforeZoom: () ->
         maxIterations = Math.round(MAX_ITERATIONS_SCALE_FACTOR * recalibrateMaxIterations 0.1)
         maxIterations = Math.max(maxIterations, INITIAL_MAX_ITERATIONS)
-        console.log "new maxIterations: " + maxIterations
+        console.log "New maxIterations: " + maxIterations
         escapeTimeDistribution = {}
 
 map.zoomIn()

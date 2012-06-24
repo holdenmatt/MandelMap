@@ -6,7 +6,6 @@ from flask.ext.assets import Bundle
 
 all_css = Bundle(
     'css/bootstrap.css',
-    'css/bootstrap-responsive.css',
     'css/TileMap.css',
     filters='cssmin',
     output='build/all.css'

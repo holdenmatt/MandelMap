@@ -13,7 +13,7 @@ Use <canvas> tiles that render by progressively enhancing the resolution.
 TILE_SIZE = 128
 
 # Tiles are initially rendered with this pixel size, before enhancing.
-MIN_RESOLUTION = 16
+MIN_RESOLUTION = 8
 
 # Yield to user interaction if we've been drawing more than this # of ms.
 ANIMATION_SPEED = 20
@@ -329,11 +329,13 @@ class CanvasTileMap extends TileMap
     # and resolution (i.e. pixel width).
     getTile: (tileX, tileY, zoom, resolution) =>
 
+        # Create a canvas and ImageData for this tile.
         tile = $('<canvas>').attr
             width: TILE_SIZE + 'px'
             height: TILE_SIZE + 'px'
-
         context = tile.get(0).getContext('2d')
+        imageData = context.createImageData(TILE_SIZE, TILE_SIZE)
+
         bounds = @options.bounds
 
         for i in [0...TILE_SIZE] by resolution
@@ -351,9 +353,19 @@ class CanvasTileMap extends TileMap
                 x = bounds.xMin + (bounds.xMax - bounds.xMin) * worldX / TILE_SIZE
                 y = bounds.yMin + (bounds.yMax - bounds.yMin) * worldY / TILE_SIZE
 
-                context.fillStyle = @options.getColor(x, y)
-                context.fillRect(i, j, resolution, resolution)
+                # Get the color at this point.
+                [r, g, b, a] = @options.getColor(x, y)
 
+                # Paint a resolution x resolution square of this color.
+                for dx in [0...resolution]
+                    for dy in [0...resolution]
+                        index = 4 * (i + dx + (j + dy) * TILE_SIZE)
+                        imageData.data[index] = r
+                        imageData.data[index + 1] = g
+                        imageData.data[index + 2] = b
+                        imageData.data[index + 3] = a
+
+        context.putImageData(imageData, 0, 0)
         return tile
 
 

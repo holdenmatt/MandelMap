@@ -23,10 +23,6 @@ class Color
     interpolateWith: (other, param) ->
         new Color (interpolate(@values[i], other.values[i], param) for i in [0...4])
 
-    toRGBA: () ->
-        [r, g, b, a] = @values
-        "rgba(#{r}, #{g}, #{b}, #{a})"
-
     # Convert from a hex code to rgba.
     @fromHex: (hex) ->
         match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec hex
@@ -117,6 +113,8 @@ ColorMap.RAINBOW = new ColorMap [
     Color.fromHex "#4B0082"
     Color.fromHex "#EE82EE"
 ]
+
+ColorMap.BLACK = Color.fromHex "#000000"
 
 
 window.ColorMap = ColorMap

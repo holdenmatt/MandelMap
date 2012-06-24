@@ -35,8 +35,6 @@ MAX_ITERATIONS_SCALE_FACTOR = 1.5
 MAX_ITERATIONS_ERROR = 0.1
 
 
-BLACK = "#000000"
-
 # Use (nearly-)continuous escape times instead of discrete integer values?
 USE_SMOOTH_ESCAPE_TIMES = true
 
@@ -144,10 +142,12 @@ recalibrateMaxIterations = () ->
 # Return a color to indicate the escape time at a point.
 getColor = (x, y) ->
     value = getEscapeValue(x, y)
-    if value == 0 then return BLACK
-
-    value = Math.sqrt(value - 1)
-    return ColorMap.RAINBOW.colorAt(value).toRGBA()
+    if value == 0
+        color = ColorMap.BLACK
+    else
+        value = Math.sqrt(value - 1)
+        color = ColorMap.RAINBOW.colorAt(value)
+    return color.values
 
 
 map = new CanvasTileMap

@@ -22,6 +22,9 @@ Question: How should we increase the maxIterations limit as we zoom in?
 ###
 
 
+# Define the colors to use.
+COLOR_MAP = ColorMap.RAINBOW
+
 # Start with this value of maxIterations at zoom 0.
 INITIAL_MAX_ITERATIONS = 50
 maxIterations = INITIAL_MAX_ITERATIONS
@@ -34,16 +37,11 @@ MAX_ITERATIONS_SCALE_FACTOR = 1.5
 # losing colors with a % of canvas pixels greater than this % threshold.
 MAX_ITERATIONS_ERROR = 0.1
 
-
 # Use (nearly-)continuous escape times instead of discrete integer values?
 USE_SMOOTH_ESCAPE_TIMES = true
 
-
 # Keep a count of each rounded escape time value (excluding 0) at a given zoom level.
 escapeTimeDistribution = {}
-incrementEscapeTime = (time) ->
-    time = Math.round time
-    escapeTimeDistribution[time] = (escapeTimeDistribution[time] || 0) + 1
 
 
 # Is a complex point c inside the main cardioid?
@@ -100,12 +98,16 @@ getEscapeValue = (c_x, c_y) ->
 
         norm = z_x * z_x + z_y * z_y
         modulus = Math.sqrt norm
+
+        # See: http://linas.org/art-gallery/escape/escape.html
         escapeTime = i + extraIterations - Math.log(Math.log(modulus)) / Math.log(2)
     else
-        # Using the iteration count as escape time is simple but produces bands of color.
+        # Using the iteration count as escape time is simpler but produces bands of color.
         escapeTime = i
 
-    incrementEscapeTime escapeTime
+    # Keep a count for each escape time.
+    escapeTimeDistribution[Math.round(escapeTime)]++
+
     return escapeTime
 
 
@@ -140,7 +142,17 @@ getColor = (x, y) ->
     if value == 0
         color = ColorMap.BLACK
     else
-        color = ColorMap.RAINBOW.colorAt(value)
+        # Shift escape times 1, 2... down to [0, infinity) so we start with color 0.
+        value = Math.max(0, value - 1)
+
+        # Apply a sqrt: [0, infinity) -> [0, infinity) before computing colors.
+        # Without a transform, we get lots of noise near the M-set, and noise increases
+        # as we zoom in.  Applying a sqrt reduces noise, and keeps it constant on zoom.
+        value = Math.sqrt value
+
+        # Use the cached color at the nearest tick value.
+        index = Math.floor(value * 256) % COLOR_MAP.cache.length
+        color = COLOR_MAP.cache[index]
     return color.values
 
 
@@ -153,12 +165,15 @@ map = new CanvasTileMap
         yMin: -2.0
         yMax:  2.0
 
-    # Recalibrate maxIterations and reset the distribute on each each.
+    # Recalibrate maxIterations and reset the distribute on each each zoom.
     beforeZoom: () ->
         maxIterations = Math.round(MAX_ITERATIONS_SCALE_FACTOR * recalibrateMaxIterations 0.1)
         maxIterations = Math.max(maxIterations, INITIAL_MAX_ITERATIONS)
         console.log "New maxIterations: " + maxIterations
+
         escapeTimeDistribution = {}
+        for time in [1..maxIterations]
+            escapeTimeDistribution[time] = 0
 
 map.zoomIn()
 map.zoomIn()

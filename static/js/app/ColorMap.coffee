@@ -5,15 +5,6 @@ A ColorMap is a way of mapping each numeric value in [0, infinity) to a color.
 ###
 
 
-# Apply a transform [0, infinity) -> [0, infinity) before computing colors.
-transform = (value) ->
-    # Escape values start at 1, 2..., so shift them down to 0.
-    value = Math.max(value - 1, 0)
-    # Without a transform, we get lots of noise near the M-set, and noise increases
-    # as we zoom in.  Applying a sqrt reduces noise, and keeps in constant on zoom.
-    return Math.sqrt(value)
-
-
 # Given start/end values in [0, 255] and a parameter value in [0, 1],
 # linearly interpolate from start to end, rounding to an integer.
 interpolate = (start, end, param) ->
@@ -86,31 +77,24 @@ class LinearGradient
 
 class ColorMap
 
-    constructor: (colors, period) ->
+    constructor: (colors) ->
         # Reflect colors to avoid a hard transition between last/first.
         colors = colors.slice()
         reversed = colors.slice().reverse()
         Array.prototype.push.apply(colors, reversed.slice(1))
 
         @gradient = new LinearGradient colors
-        @period = colors.length - 1
+        @period = @gradient.length - 1
 
         # There can be at most 256 gradient values between each color pair,
-        # so cache colors at these tick values for efficiency.
-        @ticks = 256 * (@gradient.length - 1)
-        @cache = {}
+        # so cache colors at these tick values.
+        @ticks = 256 * @period
+        @cache = (@colorAt(val / 256) for val in [0...@ticks])
 
     colorAt: (value) ->
         # Convert this value to a param in [0, 1] relative to its period.
-        value = transform value
         param = (value % @period) / @period
-
-        # Cache the result at integer tick values.
-        key = Math.floor(param * @ticks)
-        color = @cache[key]
-        if not color?
-            color = @cache[key] = @gradient.colorAt param
-
+        color = @gradient.colorAt param
         return color
 
 

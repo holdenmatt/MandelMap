@@ -5,11 +5,6 @@ A ColorMap is a way of mapping each numeric value in [0, infinity) to a color.
 ###
 
 
-# A gradient between two colors can have at most 256 values, so we'll cache ColorMap
-# values at this # of ticks per color pair.  64 is high enough to hide discrete colors.
-COLOR_PAIR_TICKS = 64
-
-
 # Apply a transform [0, infinity) -> [0, infinity) before computing colors.
 transform = (value) ->
     # Escape values start at 1, 2..., so shift them down to 0.
@@ -100,9 +95,9 @@ class ColorMap
         @gradient = new LinearGradient colors
         @period = colors.length - 1
 
-        # There can be at most 255 gradient values between each color pair,
+        # There can be at most 256 gradient values between each color pair,
         # so cache colors at these tick values for efficiency.
-        @ticks = COLOR_PAIR_TICKS * (@gradient.length - 1)
+        @ticks = 256 * (@gradient.length - 1)
         @cache = {}
 
     colorAt: (value) ->

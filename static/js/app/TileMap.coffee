@@ -98,6 +98,10 @@ class Viewport extends Model
             x: midpoint
             y: midpoint
 
+    # Return the center point, in pixel coordinates.
+    getCenter: () ->
+        [@get("x"), @get("y")]
+
     # Return the bounding box, in pixel coordinates.
     getBounds: () ->
         width = @get "width"
@@ -200,6 +204,17 @@ class TileMap extends View
 
         # Request tiles when a drag ends.
         @tileContainer.on "dragend", @render
+
+        @tileContainer.$el.on "dblclick", (e) =>
+            # Get the pixel coordinates of the click within the canvas.
+            position = @tileContainer.$el.position()
+            x = e.pageX - position.left
+            y = e.pageY - position.top
+
+            # Compare it to the current center, and translate/zoom.
+            [centerX, centerY] = @viewport.getCenter()
+            @viewport.translate(x - centerX, y - centerY)
+            @zoomIn()
 
     # Create control buttons to zoom in and out.
     createZoomControl: () ->

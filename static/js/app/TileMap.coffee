@@ -270,12 +270,13 @@ class TileMap extends View
         @viewport.zoomIn()
         @clearTiles()
         @render()
+
     zoomOut: () =>
-        if @viewport.get("zoom") > 0
-            @options.beforeZoom?()
-            @viewport.zoomOut()
-            @clearTiles()
-            @render()
+        if not @viewport.get("zoom") > 0 then return
+        @options.beforeZoom?()
+        @viewport.zoomOut()
+        @clearTiles()
+        @render()
 
     # Get and add the tiles needed to cover the current viewport.
     render: () =>
@@ -291,10 +292,39 @@ class TileMap extends View
 class CanvasTileMap extends TileMap
     required: ["el", "getColor", "bounds"]
 
+    constructor: () ->
+        super
+        # Enqueue info about needed tiles in arrays, keyed by resolution.
+        @queue = {}
+        @queueLength = 0
+
+    clear: () ->
+        @queue = {}
+        @queueLength = 0
+
+    # Enqueue a tile's info by its resolution.
+    enqueue: (tile) ->
+        resolution = tile.resolution
+        if not @queue[resolution]?
+            @queue[resolution] = []
+        @queue[resolution].push tile
+        @queueLength++
+
+    # Pop the next tile from the queue with coarsest resolution.
+    pop: () ->
+        if @queueLength == 0
+            return null
+
+        resolutions = _.keys(@queue).reverse()
+        for res in resolutions
+            if @queue[res].length > 0
+                next = @queue[res].shift()
+                @queueLength--
+                return next
+
     render: () =>
-        # Use a queue to represent tiles needed (including resolution).
         # Clear the queue on each render.
-        @tileQueue = []
+        @clear()
 
         zoom = @viewport.get "zoom"
         for [tileX, tileY] in @viewport.getCovering()
@@ -307,22 +337,22 @@ class CanvasTileMap extends TileMap
             else
                 resolution = MIN_RESOLUTION
 
-            # Enqueue this tile/zoom/resolution for rendering.
+            # Enqueue this tile for rendering.
             if resolution >= 1
-                @tileQueue.push
+                @enqueue
+                    resolution: resolution
                     tileX: tileX
                     tileY: tileY
                     zoom: zoom
-                    resolution: resolution
 
         @renderNextTiles()
 
-    # Render the next tiles in the queue, pausing for user interaction
-    # after a specified threshold.
+    # Render the next tiles in the queue, prioritizing higher resolutions,
+    # and pausing for user interaction after a specified threshold.
     renderNextTiles: () =>
         start = current = (new Date).getTime()
         while current - start < ANIMATION_SPEED
-            next = @tileQueue.shift()
+            next = @pop()
             if not next?
                 break
 
@@ -333,11 +363,11 @@ class CanvasTileMap extends TileMap
             # Re-enqueue the same tile with a higher resolution.
             if next.resolution > 1
                 next.resolution = next.resolution / 2
-                @tileQueue.push next
+                @enqueue next
 
             current = (new Date).getTime()
 
-        if @tileQueue.length > 0
+        if @queueLength > 0
             setTimeout @renderNextTiles, 0
 
     # Return a canvas tile for the given tile coordinates, zoom,
